@@ -1,12 +1,9 @@
 const express = require("express");
-const user = require("../models/index").user;
+const models = require("../models/index");
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 const router = express.Router();
-
-// let User;
-
 
 const isAuthenticated = function(req, res, next) {
   // console.log(req.isAuthenicated());
@@ -77,7 +74,7 @@ router.post('/signup', function(req, res) {
     password: hashedPassword
   }
 
-  user.create(newuser)
+  models.user.create(newuser)
   .then(function() {
     res.redirect('/')
   })
@@ -87,31 +84,84 @@ router.post('/signup', function(req, res) {
   });
 });
 
-router.get('/homepage', requireLogin, isAuthenticated, function (req, res) {
-  // models.user.findAll({
-  //   messages
-  // },
-  // { where: {
-  //   updatedAt: req.params.updatedAt, DESC
-  // }
-  // })
-  res.render('homepage', {username: req.user.username});
+router.get('/homepage', isAuthenticated, function (req, res) {
+  models.message.findAll({
+    order: [['updatedAt', 'DESC']],
+    include: [
+      {model: models.user, as: 'users'},
+      {model: models.like, as: 'likes'}
+    ]
+  })
+  .then(function(data) {
+    // console.log("This is data:", data);
+    res.render('homepage', {username: req.user.username, data: data});
+  })
+  // res.render('homepage', {username: req.user.username});
 });
 
-router.post('/homepage', function(req, res) {
+router.get('/create',isAuthenticated, function(req, res) {
   res.render('homepage');
 });
 
-router.get('/create', requireLogin, isAuthenticated, function(req, res) {
-  res.render('create');
+router.post('/create', function(req, res) {
+
+  models.message.create({
+    userId: req.user.id,
+    text: req.body.newGab,
+    // likes: req.like.clicks
+  }).then(function(data) {
+    // console.log("This is your text: ", data.);
+    res.redirect('/homepage');
+  })
 });
 
-// router.post('/create', requireLogin, isAuthenticated, function(req, res) {
-//   models.messages.create({
-//     newGab: req.body.newGab
+router.get('/delete/:id', function(req, res) {
+  // models.message.destroy({
+  //   where: {
+  //     userId: req.params.id
+  //   }
+  // })
+  models.message.findById(req.params.id)
+  .then(function(data) {
+    if (req.user.id == data.userId) {
+      data.destroy() .then(function() {
+        res.redirect('/homepage');
+      })
+    }
+  })
+  // console.log("This is deleted:", req.params.id);
+  // res.redirect('/homepage');
+});
+
+// router.get('/like/:like.id', function(req, res) {
+//   models.like.findById(req.like.id)
+//   .then(function() {
+//     if (req.like.id == req.message.id) {
+//       req.like.clicks += 1
+//       req.save().then(function() {
+//         res.redirect('homepage')
+//       })
+//     }
 //   })
-//   res.redirect('homepage', {messages: req.messages.text});
 // });
+
+router.get('/like/:likesId', function(req, res) {
+console.log(req.user.id, "UserId");
+console.log(req.params.messageId, "MessageId");
+  models.like.create({
+    userId: req.user.id,
+    messageId: req.params.messagesId
+  })
+  .then(function() {
+    req.like.clicks +=1
+    req.save().then(function() {
+      res.redirect('homepage');
+    })
+    // res.redirect('homepage');
+  })
+});
+
+router.get('/likeit/:messageId')
 
 router.get('/logout', function(req, res) {
   req.logout();

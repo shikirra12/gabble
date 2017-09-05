@@ -19,16 +19,10 @@ module.exports = function(sequelize, DataTypes) {
     user.associate =
     function(models) {
       user.hasMany(models.message, {
-        // foreignKey: 'userId',
-        // otherKey: 'messageId',
-        // through: 'messages'
         as: 'messages',
         foreignKey: 'userId'
       })
       user.hasMany(models.like, {
-        // foreignKey: 'userId',
-        // otherKey: 'messageId',
-        // through: 'messages'
         as: 'likes',
         foreignKey: 'userId'
       })

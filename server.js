@@ -1,10 +1,11 @@
 const express = require("express");
 const mustacheExpress = require("mustache-express");
 const path = require("path");
-const routesU = require("./routes/user");
-const routesM = require("./routes/message");
+const routes = require("./routes/index");
+// const routesM = require("./routes/message");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
+const expressValidator = require('express-validator')
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
@@ -24,6 +25,7 @@ app.set("layout", "layout");
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+app.use(expressValidator());
 
 app.use(morgan("dev"));
 
@@ -87,8 +89,8 @@ app.use(function (req, res, next) {
   next();
 })
 
-app.use(routesM);
-app.use(routesU);
+// app.use(routesM);
+app.use(routes);
 
 app.listen(3000, function() {
   console.log("App is running on localhost:3000");

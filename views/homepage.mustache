@@ -1,7 +1,32 @@
 <h1>{{username}}'s Gabble</h1>
 
-<p>
-{{#message}}
-  {{.}}
-{{/message}}
-</p>
+<br>
+<h2>Create a new Gab</h2>
+<br>
+{{#user}}
+<form class="" action="/create" method="post">
+  <input type="text" name="title" value="" placeholder="Title">
+  <br>
+  <textarea name="newGab" rows="8" cols="80"></textarea>
+  <button type="submit" name="button">Save Gab</button>
+</form>
+
+{{/user}}
+
+{{#data}}
+<div class="">
+  <h4>{{userId}}</h4>
+    {{text}}
+    <br>
+    {{updatedAt}}
+    {{clicks}}
+    {{#userId}}
+    <a href="/delete/{{id}}">Delete It!</a>
+    {{/userId}}
+    {{^userId}}
+    {{/userId}}
+    <a href="/like/{{likes.id}}">Like It!</a>
+    <a href="/likes">Who Liked It!</a>
+</div>
+<br>
+{{/data}}

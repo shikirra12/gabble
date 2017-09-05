@@ -9,10 +9,25 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        // references: {
+        //   model: 'users',
+        //   key: 'id'
+        // }
       },
       messageId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        // references: {
+        //   model: 'messages',
+        //   key: 'id'
+        // }
+      },
+      clicks: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
       },
       createdAt: {
         allowNull: false,
