@@ -19,14 +19,16 @@
     {{text}}
     <br>
     {{updatedAt}}
-    {{clicks}}
+    <p>Likes: {{likes.length}}</p>
+    <form class="" action="/like/{{id}}" method="post">
+      <button type="submit" name="button"> like </button>
+    </form>
     {{#userId}}
-    <a href="/delete/{{id}}">Delete It!</a>
+
+    <a
+     href="/delete/{{id}}">Delete It!</a>
     {{/userId}}
-    {{^userId}}
-    {{/userId}}
-    <a href="/like/{{likes.id}}">Like It!</a>
-    <a href="/likes">Who Liked It!</a>
+    <a href="/likeit/{{id}}">Who Liked It!</a>
 </div>
 <br>
 {{/data}}

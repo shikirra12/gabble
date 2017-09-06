@@ -93,34 +93,62 @@ router.get('/homepage', isAuthenticated, function (req, res) {
     ]
   })
   .then(function(data) {
-    // console.log("This is data:", data);
-    res.render('homepage', {username: req.user.username, data: data});
+    // console.log("Message:", data);
+    // console.log("LIKE:", like);
+    res.render('homepage', {user: req.user.name, username: req.user.username, data: data});
   })
-  // res.render('homepage', {username: req.user.username});
 });
+
+// router.get('/homepage/:like/:likeId', function(req, res) {
+//   req.like.clicks += 1
+//   req.like.save()
+//   .then(function() {
+//     res.redirect('/homepage');
+//   })
+// });
 
 router.get('/create',isAuthenticated, function(req, res) {
   res.render('homepage');
 });
 
 router.post('/create', function(req, res) {
-
   models.message.create({
     userId: req.user.id,
     text: req.body.newGab,
-    // likes: req.like.clicks
-  }).then(function(data) {
-    // console.log("This is your text: ", data.);
+    likes: req.like.length
+  })
+  .then(function(data) {
     res.redirect('/homepage');
   })
 });
 
+router.post('/like/:id', function(req, res) {
+  models.like.create({
+    userId: req.user.id,
+    messageId: req.params.id
+  })
+  .then(function(like) {
+    res.redirect('/homepage');
+  })
+});
+
+
+router.get('/likeit/:messageId', function(req, res) {
+  models.message.findById(req.params.messageId, {include: [
+    {model: models.like, as: 'likes',
+    include:   [{model: models.user, as: 'user'}]
+  }, {
+    model: models.user, as: 'users'
+  }
+  ]
+  })
+  .then(function(message) {        console.log("This is message:", message);
+    res.render('likeit', {message: message, user: req.user});
+  })
+});
+
+
 router.get('/delete/:id', function(req, res) {
-  // models.message.destroy({
-  //   where: {
-  //     userId: req.params.id
-  //   }
-  // })
   models.message.findById(req.params.id)
   .then(function(data) {
     if (req.user.id == data.userId) {
@@ -129,39 +157,7 @@ router.get('/delete/:id', function(req, res) {
       })
     }
   })
-  // console.log("This is deleted:", req.params.id);
-  // res.redirect('/homepage');
 });
-
-// router.get('/like/:like.id', function(req, res) {
-//   models.like.findById(req.like.id)
-//   .then(function() {
-//     if (req.like.id == req.message.id) {
-//       req.like.clicks += 1
-//       req.save().then(function() {
-//         res.redirect('homepage')
-//       })
-//     }
-//   })
-// });
-
-router.get('/like/:likesId', function(req, res) {
-console.log(req.user.id, "UserId");
-console.log(req.params.messageId, "MessageId");
-  models.like.create({
-    userId: req.user.id,
-    messageId: req.params.messagesId
-  })
-  .then(function() {
-    req.like.clicks +=1
-    req.save().then(function() {
-      res.redirect('homepage');
-    })
-    // res.redirect('homepage');
-  })
-});
-
-router.get('/likeit/:messageId')
 
 router.get('/logout', function(req, res) {
   req.logout();
