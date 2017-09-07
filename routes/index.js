@@ -93,19 +93,11 @@ router.get('/homepage', isAuthenticated, function (req, res) {
     ]
   })
   .then(function(data) {
-    // console.log("Message:", data);
+    console.log("Message:", data);
     // console.log("LIKE:", like);
     res.render('homepage', {user: req.user.name, username: req.user.username, data: data});
   })
 });
-
-// router.get('/homepage/:like/:likeId', function(req, res) {
-//   req.like.clicks += 1
-//   req.like.save()
-//   .then(function() {
-//     res.redirect('/homepage');
-//   })
-// });
 
 router.get('/create',isAuthenticated, function(req, res) {
   res.render('homepage');
@@ -115,7 +107,7 @@ router.post('/create', function(req, res) {
   models.message.create({
     userId: req.user.id,
     text: req.body.newGab,
-    likes: req.like.length
+    // likes: req.like.length
   })
   .then(function(data) {
     res.redirect('/homepage');
@@ -134,9 +126,10 @@ router.post('/like/:id', function(req, res) {
 
 
 router.get('/likeit/:messageId', function(req, res) {
-  models.message.findById(req.params.messageId, {include: [
-    {model: models.like, as: 'likes',
-    include:   [{model: models.user, as: 'user'}]
+  models.message.findById(req.params.messageId,
+    {include: [
+      {model: models.like, as: 'likes',
+        include:   [{model: models.user, as: 'user'}]
   }, {
     model: models.user, as: 'users'
   }

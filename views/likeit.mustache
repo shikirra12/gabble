@@ -7,7 +7,13 @@
     {{updatedAt}}
     <p>Likes: {{likes.length}}</p>
     <h2>Who Liked It:</h2>
-{{#likes}}{{#user}}{{name}}{{/user}}{{/likes}}
+{{#likes}}
+<br>
+{{#user}}
+{{name}}
+{{/user}}
+<br>
+{{/likes}}
 </div>
 <br>
 {{/message}}
